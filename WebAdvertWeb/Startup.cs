@@ -31,7 +31,7 @@ namespace WebAdvertWeb
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            
+            services.ConfigureApplicationCookie(options => { options.LoginPath = "/Accounts/SignIn"; });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

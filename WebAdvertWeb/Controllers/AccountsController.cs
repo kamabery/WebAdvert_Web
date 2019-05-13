@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Amazon.AspNetCore.Identity.Cognito;
-using Amazon.CognitoIdentityProvider.Model;
 using Amazon.Extensions.CognitoAuthentication;
 using Microsoft.AspNetCore.Mvc;
 using WebAdvertWeb.Models.Accounts;
@@ -96,5 +95,37 @@ namespace WebAdvertWeb.Controllers
             return View("Confirm", model);
         }
 
+        [HttpGet]
+        public IActionResult SignIn(SignInModel model)
+        {
+            return View(model);
+        }
+
+        [HttpPost]
+        [ActionName("SignIn")]
+        public async Task<IActionResult> SignInPost_Post(SignInModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("SignIn", model);
+            }
+
+            var result = await this.signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false).ConfigureAwait(false);
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError("LoginError", "Invalid Email and Password");
+                return View("SignIn", model);
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        [ActionName("SignOut")]
+        public async Task<IActionResult> SingOut()
+        {
+           await this.signInManager.SignOutAsync();
+           return RedirectToAction("SignIn", "Accounts");
+        }
     }
 }
